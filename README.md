@@ -56,9 +56,9 @@ For the purpose of qualitative analysis, excerpts from several books which are n
 
 **Effect of the Use on the Potential Market:** These excerpts could not be used as a substitute for the full book, or be used to reconstruct the full book, and would thus have no impact on sales.
 
-[^1]: Lasky, Kathryn (2010). Guardians of Ga'Hoole: The Siege. Scholastic. ISBN: 9780545283359.
-  Lasky, Kathryn (2008). Guardians of Ga'Hoole: The War of the Ember. Scholastic Paperbacks. ISBN: 9780439888097.
-  Lee, Harper (1960). To Kill A Mockingbird. HarperCollins. ISBN: 9780446310789.
+[^1]: Lasky, Kathryn (2010). Guardians of Ga'Hoole: The Siege. Scholastic. ISBN: 9780545283359.  
+  Lasky, Kathryn (2008). Guardians of Ga'Hoole: The War of the Ember. Scholastic Paperbacks. ISBN: 9780439888097.  
+  Lee, Harper (1960). To Kill A Mockingbird. HarperCollins. ISBN: 9780446310789.  
 
 ## License
 
@@ -72,3 +72,4 @@ The contents of this repository are provided under a CC BY-NC-SA 4.0 DEED Attrib
 > No part of those works is licensed under this repository’s main license.
 
 In addition, the CommonLit CLEAR Corpus used in this and it's content are also provided under the CC BY-NC-SA 4.0 DEED Attribution-NonCommercial-ShareAlike 4.0 International license.
+
