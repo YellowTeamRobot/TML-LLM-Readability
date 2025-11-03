@@ -30,7 +30,7 @@
 
 - [x] Analyze non-tool-assisted LLM ability to generate readability scores of excerpts from books of qualitatively "known" readability scores.
   
-  - [ ] Potentially assess excerpts from more books of "known" qualitative readability score
+  - [x] Potentially assess excerpts from more books of "known" qualitative readability score
 
 ## Running the Code
 
@@ -52,13 +52,20 @@ For the purpose of qualitative analysis, excerpts from several books which are n
 
 **Nature of the Copyrighted Work:** While the excerpts are taken from creative works, rather than factual ones, we are interested in analyzing the linguistic structure and readability of creative works, which are often structured different from factual works. 
 
-**Amount and Substantiality of the Portion Taken:** Each work not yet in the public domain used in our qualitative analysis only had an exceptionally small portion used. Specifically, 5 randomly selected paragraphs were taken from each book and recorded for use. This comes nowhere close to the full text, and is not representative of the "heart" of the work.
+**Amount and Substantiality of the Portion Taken:** Each work not yet in the public domain used in our qualitative analysis only had an exceptionally small portion used. Specifically, 5 randomly selected paragraphs were taken from each book and recorded for use. This comes nowhere close to the full text, and is not representative of the "heart" of the work[^2].
 
 **Effect of the Use on the Potential Market:** These excerpts could not be used as a substitute for the full book, or be used to reconstruct the full book, and would thus have no impact on sales.
 
-[^1]: Lasky, Kathryn (2010). Guardians of Ga'Hoole: The Siege. Scholastic. ISBN: 9780545283359.  
-  Lasky, Kathryn (2008). Guardians of Ga'Hoole: The War of the Ember. Scholastic Paperbacks. ISBN: 9780439888097.  
-  Lee, Harper (1960). To Kill A Mockingbird. HarperCollins. ISBN: 9780446310789.  
+[^1]: Lasky, Kathryn (2010). *Guardians of Ga'Hoole: The Siege*. Scholastic. ISBN: 9780545283359.  
+  Lasky, Kathryn (2008). *Guardians of Ga'Hoole: The War of the Ember*. Scholastic Paperbacks. ISBN: 9780439888097.  
+  Lee, Harper (1960). *To Kill A Mockingbird*. HarperCollins. ISBN: 9780446310789.  
+  Munoz Ryan, P., & Ryan, P. M. (2002). *Esperanza Rising*. Scholastic Press. ISBN: 9780545532341.  
+  Shannon, David (1998). *A Bad Case of Stripes*. Scholastic Inc. ISBN: 9781338113150.  
+  Palacio, R J (2012). *Wonder*. Random House Children's Books. ISBN: 9780375899881.  
+  Robinson, Sharon (2016). *The Hero Two Doors Down*. Scholastic Inc. ISBN: 9780545804530.  
+  Paulsen, G., & Willis, D (1987). *Hatchet*. Simon and Schuster. ISBN: 9781416925088.
+
+[^2]: For books where 5 paragraphs *did* represent a significant portion of the original work, their excerpts were redacted from the data before uploading to this repository.
 
 ## License
 
@@ -72,4 +79,3 @@ The contents of this repository are provided under a CC BY-NC-SA 4.0 DEED Attrib
 > No part of those works is licensed under this repository’s main license.
 
 In addition, the CommonLit CLEAR Corpus used in this and it's content are also provided under the CC BY-NC-SA 4.0 DEED Attribution-NonCommercial-ShareAlike 4.0 International license.
-
