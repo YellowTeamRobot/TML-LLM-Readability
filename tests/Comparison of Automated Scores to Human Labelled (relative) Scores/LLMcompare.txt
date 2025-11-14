@@ -1,0 +1,6 @@
+Pearson correlation: -0.7086 (p = 2.5218e-153)
+Spearman correlation: -0.7354 (p = 7.4201e-171)
+Kendall correlation: -0.5416 (p = 7.9513e-142)
+
+Linear regression: y = -0.2603x + 1.5864
+R² = 0.5022
