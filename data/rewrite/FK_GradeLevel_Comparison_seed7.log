@@ -1,0 +1,6 @@
+Starting grade comparison...
+
+Missing FK score for ID 5931, skipping.
+Missing FK score for ID 5693, skipping.
+Missing FK score for ID 6461, skipping.
+Done! Results saved to data/rewrite/FK_GradeLevel_Comparison_seed7.csv
