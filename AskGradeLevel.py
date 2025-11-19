@@ -4,11 +4,11 @@ import statistics
 import re
 import time
 
-INPUT_FILE = "CLEAR_1000_sample_with_Scores.csv"      # your input csv
-OUTPUT_FILE = "1000_sample_Output_GradeLevel.csv"    # where results will be saved
+INPUT_FILE = "CLEAR_1000_sample_with_Scores.csv" 
+OUTPUT_FILE = "1000_sample_Output_GradeLevel.csv"
 MODEL = "gpt-oss:20b"
 NUM_SAMPLES = 5
-ENCODING= 'utf-8' #'windows-1252' #'utf-8'
+ENCODING= 'utf-8'
 
 def query_ollama(prompt: str) -> str:
     """Call Ollama CLI with given prompt and return model response text."""
