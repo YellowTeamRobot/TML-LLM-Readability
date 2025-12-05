@@ -40,9 +40,9 @@ GPT-OSS-20b is used for this project, and can be installed with `ollama fetch gp
 
 To run LLM inference of Grade Level or Difficulty (non-tool-assisted), serve ollama with `ollama serve`, and in another terminal run `python AskGradeLevel.py` or `python AskReadability.py`. These files grab excerpts from the `CLEAR_1000_sample.csv` file by default. Input and output files can be specified by modifying the python files.
 
-{TODO: Insert more directions for running code here, and what different files do.}
+To have LLM rewrite excerpts to a target grade level (randomly chosen) for the `CLEAR_1000_sample.csv`, first open either the `rewrite_excerpts.py` or `rewrite_excerpts_iter.py` file, where you can edit the grade level metric being used. The former will only rewrite once, giving the LLM the grade level of the original prompt from the metric specified at the top of the file, the latter will have the LLM iteratively rewrite the excerpt until it is within +- 1 grade level of the target level (according the the specified grade level metric). Running these files is then the same as before, make sure to have ollama running `ollama serve`, and then just run the desired python script as normal. The outputs will be stored in a CSV file.
 
-{TODO: edit AskGradeLevel.py to take input parameters for input file, output file, input file rows for excerpt ID and excerpt text, and selection for which prompt to use (Grade Level or Score 1-10), input for row range (e.x. only want to analyse row50:row100}
+Because the LLM inferred grade level isn't calculated during rewrites (unless that is the main method chosen), one will have to run the `AskGradeLevel.py` with the input grade level column modified to get this metric from the csv.
 
 ## Notice of Fair Use
 
@@ -79,3 +79,4 @@ The contents of this repository are provided under a CC BY-NC-SA 4.0 DEED Attrib
 > No part of those works is licensed under this repository’s main license.
 
 In addition, the CommonLit CLEAR Corpus used in this and it's content are also provided under the CC BY-NC-SA 4.0 DEED Attribution-NonCommercial-ShareAlike 4.0 International license.
+
