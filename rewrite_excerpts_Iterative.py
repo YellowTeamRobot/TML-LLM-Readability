@@ -5,17 +5,17 @@ import csv
 import re
 import random
 import json
+import subprocess
 
 
 MODEL = "gpt-oss:20b"
 INPUT_FILE = "CLEAR_1000_sample.csv"      
-OUTPUT_FILE = "Rewrite_Iter_FK_seed7_Final.csv"    
+OUTPUT_FILE = "Rewrite_Iter_LLMu_seed7_cont1.csv"    
 ENCODING= 'utf-8' #'windows-1252' #'utf-8'
-#DESIRED_GRADE_LEVEL = "5th" # adjust this to select the desired grade level output
 METHOD = "FK" # "FK"-Flesch-Kincaid Grade Level, "SMOG"-SMOG, "ARI"-Automated Readability Index, "DC"-Dale-Chall, "LLM"-get grade level from csv of LLM output by ID number, "LLM-C"-get corrected LLM grade level from csv by ID number, "None", don't get grade level of input text
 PRECOMPUTED_GRADE_LEVEL = None #
 
-START_ROW = 1 # set to 1 to start from beginning, or to a higher number to resume from that row (make sure to change output file to not overwrite existing)
+START_ROW = 37 # set to 1 to start from beginning, or to a higher number to resume from that row (make sure to change output file to not overwrite existing)
 SEED_VALUE = 7 # seed value for reproducibility of random grades to rewrite to. Values used in testing: 7, 303, 253478
 random.seed(SEED_VALUE)
 DESIRED_GRADE_LEVELS = [random.randint(1, 12) for _ in range(2000)]
@@ -31,8 +31,10 @@ def compute_grade_level(text: str) -> int:
         return int(textstat.automated_readability_index(text))  # Automated Readability Index grade level
     elif (METHOD == "DC"):
         return int(textstat.dale_chall_readability_score(text))  # Dale-Chall grade level
-    elif (METHOD == "LLM" or METHOD == "LLM-C"):
-        return int(PRECOMPUTED_GRADE_LEVEL)
+    elif (METHOD == "LLM"):
+        return GetLLMGradeLevel(text, False)
+    elif (METHOD == "LLM-C"):
+        return GetLLMGradeLevel(text, True)
     else:
         return int(textstat.flesch_kincaid_grade(text)) # Flesch-Kincaid grade level
 
@@ -93,32 +95,6 @@ def query_ollama_iterative(prompt: str) -> tuple[str, str, int]:
                     conversation += f"Model: The following excerpt is at a {output_grade} grade level.\nRewritten Excerpt:\n {output_text}"
                     return f"Rewritten Excerpt:{output_text}", conversation, i
             i += 1
-
-def get_llm_score(csv_filename, ID, use_corrected=False):
-    """
-    Returns the uncorrected or corrected LLM score for a given ID.
-
-    Args:
-        csv_filename (str): Path to the CSV file.
-        ID (str or int): The ID to look up.
-        use_corrected (bool): If True, return corrected score; else uncorrected.
-
-    Returns:
-        int or None: The requested score, or None if not found or invalid.
-    """
-    with open(csv_filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        col_name = "corrected LLM score" if use_corrected else "uncorrected LLM score"
-
-        for row in reader:
-            if str(row["ID"]) == str(ID):
-                val = row.get(col_name, "")
-                try:
-                    return int(val)
-                except ValueError:
-                    return None
-    return None
-
 
 def query_ollama(prompt: str) -> tuple[str, str]:
     """
@@ -190,10 +166,42 @@ def safe_query_ollama(prompt):
                     continue  # retry
                 else:
                     print("Maximum retries reached. Skipping this excerpt.")
-                    return None, None
+                    return None, None, None
             else:
                 # Some other error (network, model crash, etc.)
                 raise  # don’t suppress unknown issues
+
+
+def query_ollama_for_grade(prompt: str) -> str:
+    """Call Ollama CLI with given prompt and return model response text."""
+    result = subprocess.run(
+        ["ollama", "run", MODEL],
+        input=prompt,
+        text=True,
+        capture_output=True
+    )
+    return result.stdout.strip()
+
+def extract_grade(response: str) -> int | None:
+    """Extract the numeric grade from model response like 'Grade Level: 8'."""
+    match = re.search(r"Grade\s*Level\s*:\s*(\d+)", response)
+    if match:
+        return int(match.group(1))
+    return None
+
+def GetLLMGradeLevel(input_string: str, corrected: bool = False) -> int | None:
+    prompt = (
+        "Please give the US school grade level (1-12) (13-18 are also acceptable for college level text) for the difficulty of the text excerpt below. "
+        "Format your output strictly as 'Grade Level: {number}'.\n"
+        f"{input_string}"
+    )
+
+    response = query_ollama_for_grade(prompt)
+    grade = extract_grade(response)
+    if corrected == True and grade is not None:
+        grade -= 3  # adjust for correction factor
+
+    return grade
 
 def main():
 
@@ -225,41 +233,13 @@ def main():
             excerpt_id = row[0].strip()
             excerpt_text = row[14].strip()
 
-            if METHOD == "LLM":
-                PRECOMPUTED_GRADE_LEVEL = suffix(get_llm_score("1000_sample_orig_corrected.csv", excerpt_id, use_corrected=False))
-                #print(f"Precomputed LLM grade level for ID {excerpt_id}: {PRECOMPUTED_GRADE_LEVEL}")
-            if METHOD == "LLM-C":
-                PRECOMPUTED_GRADE_LEVEL = suffix(get_llm_score("1000_sample_orig_corrected.csv", excerpt_id, use_corrected=True))
 
-            if METHOD == "None":
-                prompt = (
-                    # The prompt to use when the LLM won't calculate a grade level before rewriting (at least not explicitly)
-                    f"Please rewrite the following text to be suitable for a {dgl_str}-grade reading level).\n"
-                    # The rest of the prompt
-                    "Make sure the rewritten text is the last part of your response, and make sure the line 'Rewritten Excerpt:' precedes it (no bold or other formatting). (If you believe the text is already at or below the desired reading level, simply put 'Excerpt already at or below desired grade level.' in place of a rewritten excerpt.\n"
-                    "Excerpt:\n"
-                    f"{excerpt_text}"
-                )
-            elif METHOD in ["LLM", "LLM-C"]:
-                prompt = (
-                    # The prompt to use when the LLM won't calculate a grade level before rewriting (at least not explicitly)
-                    f"Please rewrite the following text to be suitable for a {dgl_str}-grade reading level). The excerpt is currently at {PRECOMPUTED_GRADE_LEVEL}-grade level.\n"
-                    # The rest of the prompt
-                    "Make sure the rewritten text is the last part of your response, and make sure the line 'Rewritten Excerpt:' precedes it (no bold or other formatting). (If you believe the text is already at or below the desired reading level, simply put 'Excerpt already at or below desired grade level.' in place of a rewritten excerpt.\n"
-                    "Excerpt:\n"
-                    f"{excerpt_text}"
-                )
-            else:
-                prompt = (
-                    # --- The prompt for iterative rewriting (i.e. rewrite until the grade level is appropriate) ---
-                    #f"Please rewrite the following text to be suitable for a {dgl_str}-grade reading level (make sure to compute the grade level of the excerpt before you rewrite it, and put your rewritten text as the input to the compute grade level function, if the function says the grade level is is within +- 1 grade level of desired grade then you can stop. (And if the text is already at or below the desired reading level, simply print 'Excerpt already at or below desired grade level.')"
-                    f"You are tasked with rewriting the following text excerpt to be suitable for a {dgl_str}-grade reading level. First, you must compute the grade level of the excerpt with the compute_grade_level function. If the text is already at or below the {dgl_str}-grade reading level, print 'Excerpt already at or below desired grade level.' and terminate. If the text excerpt is above the {dgl_str}-grade reading level, rewrite the text and input it into the compute_grade_level function to check the grade level of the rewritten text. Continue this process iteratively until the grade level of the rewritten text is within one grade level of the desired {dgl_str}-grade reading level. And print the last rewritten excerpt preceded by the line 'Rewritten Excerpt:' (no bold or other formatting).\n"
-                    # --- The prompt for a single rewrite (i.e. don't check the grade level of the rewritten text) ---
-                    #f"Please rewrite the following text to be suitable for a {dgl_str}-grade reading level (make sure to compute the grade level of the excerpt before you rewrite it).\n"
-                    #"Make sure the rewritten text is the last part of your response, and make sure the line 'Rewritten Excerpt:' precedes it (no bold or other formatting). (And if the text is already at or below the desired reading level, simply put 'Excerpt already at or below desired grade level.' in place of a rewritten excerpt.\n"
-                    "Excerpt:\n"
-                    f"{excerpt_text}"
-                )
+            prompt = (
+                # --- The prompt for iterative rewriting (i.e. rewrite until the grade level is appropriate) ---
+                f"You are tasked with rewriting the following text excerpt to be suitable for a {dgl_str}-grade reading level. First, you must compute the grade level of the excerpt with the compute_grade_level function. If the text is already at or below the {dgl_str}-grade reading level, print 'Excerpt already at or below desired grade level.' and terminate. If the text excerpt is above the {dgl_str}-grade reading level, rewrite the text and input it into the compute_grade_level function to check the grade level of the rewritten text. Continue this process iteratively until the grade level of the rewritten text is within one grade level of the desired {dgl_str}-grade reading level. And print the last rewritten excerpt preceded by the line 'Rewritten Excerpt:' (no bold or other formatting).\n"
+                "Excerpt:\n"
+                f"{excerpt_text}"
+            )
             
 
             response, log, num_rewrites = safe_query_ollama(prompt)
