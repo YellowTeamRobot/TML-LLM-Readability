@@ -1,7 +1,3 @@
-"""
-This script will compare the human labelled relative difficulty (Bradley Terry) from the CLEAR corpus, to some specified metric calculated (either heuristic or LLM) stored in another csv file.
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,20 +11,10 @@ def compare_scores(
     plot_output: str = "correlation_plot.png",
     title: str = "Correlation between Human and Automated Difficulty Scores"
 ):
-    """
-    Compare human-labelled and automated difficulty scores.
 
-    Args:
-        csv1_path: Path to the first CSV (contains human-labelled scores in column 23).
-        csv2_path: Path to the second CSV (contains automated scores in csv2_col_index).
-        csv2_col_index: Column index (1-based) in second CSV to use.
-        plot_output: Optional path for saving the plot image.
-    """
-    # --- Read CSVs ---
     df1 = pd.read_csv(csv1_path)
     df2 = pd.read_csv(csv2_path)
 
-    # --- Sanity checks ---
     if "ID" not in df1.columns or "ID" not in df2.columns:
         raise ValueError("Both CSVs must have an 'ID' column in the header.")
     if df1.shape[1] < 23:
@@ -36,7 +22,6 @@ def compare_scores(
     if df2.shape[1] < csv2_col_index:
         raise ValueError(f"Second CSV must have at least {csv2_col_index} columns.")
 
-    # --- Extract relevant data ---
     id_col = "ID"
     human_col = df1.columns[22]  # 23rd column (0-based index)
     auto_col = df2.columns[csv2_col_index - 1]
@@ -54,11 +39,9 @@ def compare_scores(
     spearman_corr, spearman_p = spearmanr(x, y)
     kendall_corr, kendall_p = kendalltau(x, y)
 
-    # --- Linear regression for visualization ---
     model = LinearRegression().fit(x.reshape(-1, 1), y)
     y_pred = model.predict(x.reshape(-1, 1))
 
-    # --- Plot ---
     plt.figure(figsize=(8, 6))
     plt.scatter(x, y, label="Data points", alpha=0.7)
     plt.plot(x, y_pred, color="red", label="Line of best fit")
@@ -71,7 +54,6 @@ def compare_scores(
     plt.savefig(plot_output, dpi=300)
     plt.show()
 
-    # --- Print statistics ---
     print(f"Number of matching entries: {len(x)}")
     print(f"\nPearson correlation: {pearson_corr:.4f} (p = {pearson_p:.4e})")
     print(f"Spearman correlation: {spearman_corr:.4f} (p = {spearman_p:.4e})")
@@ -79,9 +61,6 @@ def compare_scores(
     print(f"\nLinear regression: y = {model.coef_[0]:.4f}x + {model.intercept_:.4f}")
     print(f"R² = {model.score(x.reshape(-1,1), y):.4f}")
     print(f"Plot saved as: {plot_output}")
-
-# Example usage:
-# compare_scores("human_scores.csv", "automated_scores.csv", csv2_col_index=5)
 
 if __name__ == "__main__":
     import sys

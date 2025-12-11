@@ -1,6 +1,3 @@
-'''
-This file calculated the the (traditional) readability metrics from the sampled CLEAR excerpts, and wrote to output file.
-'''
 import csv
 import re
 import textstat
