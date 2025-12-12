@@ -1,36 +1,13 @@
-# Evaluating and Improving Readability Control in Large Language Models via Tool-Augmented Feedback
+# G1 Project Deliverables
+## Evaluating and Improving Readability Control in Large Language Models via Tool-Augmented Feedback
 
 ---
 
 ## Overview
 
-{TODO: Write overview of repository}
+The project report can be found [here](https://github.com/YellowTeamRobot/TML-LLM-Readability/blob/main/G1%20Final%20Report.pdf), in the main folder of the repo.
 
-### Tasks Completed
-
-- [x] Create functions to calculate readability metrics (we made use of the [textstat](https://github.com/textstat/textstat) library for the sake of standardization)
-
-- [x] Sample CLEAR corpus into 1000 excerpts and calculate heuristic readability metrics
-
-- Run LLM on sampled excerpts to obtain inferred readability metrics:
-  
-  - [x] US Grade Level (1-12
-  
-  - [ ] Difficulty on scale 1-10
-
-- [ ] Create Ollama tool(s) to allow LLM to generate readability metric for a given piece of text
-  
-  - [ ] Create Ollama tool(s) to allow LLM to refine output of simplified text by checking readability metric of simplified text, comparing against desired readability metric score, and deciding if simplified text falls within margin of desired score, or if further refinement should be done (and conduct further refinement)
-
-- [ ] Test refinement tools on sampled excerpts
-
-- [ ] Quantitatively analyze tool-augmented results
-
-- [ ] Qualitatively analyze tool-augmented results
-
-- [x] Analyze non-tool-assisted LLM ability to generate readability scores of excerpts from books of qualitatively "known" readability scores.
-  
-  - [x] Potentially assess excerpts from more books of "known" qualitative readability score
+Code is in the main folder (some minor scripts also used are in `helper_scripts`), all data used is in the `data` folder, and all of our test results are in the `tests` folder.
 
 ## Running the Code
 
@@ -79,4 +56,5 @@ The contents of this repository are provided under a CC BY-NC-SA 4.0 DEED Attrib
 > No part of those works is licensed under this repository’s main license.
 
 In addition, the CommonLit CLEAR Corpus used in this and it's content are also provided under the CC BY-NC-SA 4.0 DEED Attribution-NonCommercial-ShareAlike 4.0 International license.
+
 
